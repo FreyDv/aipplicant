@@ -84,7 +84,7 @@ Resources:
       SyncType: "CFN_STACK_SYNC"
 ########################################################################################################################
 ########### Cloud Formation Stack template - creating empty  Cfs-name2 template and sync it with Git file ##############
-  Cfs-vpc-definition:
+  CfsVpcDefinition:
     Type: AWS::CloudFormation::Stack
     Properties:
       Capabilities: "CAPABILITY_IAM"
