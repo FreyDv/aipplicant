@@ -60,7 +60,7 @@ Resources:
     Type: AWS::CodeStarConnections::Connection
     DeletionPolicy: Delete
     Properties:
-      ConnectionName: !Sub 'cfn-git-sync-${RepositoryName}'
+      ConnectionName: !Sub "cfn-git-sync-${RepositoryName}"
       ProviderType: "GitHub"
 
   ConnectionRepositoryLink:
