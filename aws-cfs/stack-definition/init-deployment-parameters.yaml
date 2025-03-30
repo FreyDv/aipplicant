@@ -1,4 +1,4 @@
-template-file-path: ./stack-definition.yaml
+template-file-path: ./init.yaml
 
 parameters:
   MandatoryStuckName: "cfsInit-aipplicant"
