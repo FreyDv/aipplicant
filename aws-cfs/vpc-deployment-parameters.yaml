@@ -1,0 +1,5 @@
+template-file-path: "aws-cfs/vpc.yaml"
+
+parameters:
+  AllowedProviderCIDR: "76.69.20.51/32"
+  VpcCidr: "10.0.0.0/22"

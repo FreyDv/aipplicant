@@ -85,22 +85,22 @@ Resources:
       PullRequestComment: "ENABLED"
 ########################################################################################################################
 ########### Cloud Formation Stack template - creating empty  Cfs-name2 template and sync it with Git file ##############
-#  Cfs-name2:
-#    Type: AWS::CloudFormation::Stack
-#    Properties:
-#      Capabilities: "CAPABILITY_IAM"
-#      StackName: "RootCNFRegister"
-#      TemplateURL: "https://cf-templates-rpk1tnuk8wdm-ca-central-1.s3.ca-central-1.amazonaws.com/empty-template.yaml"
-#
-#  GitHubSyncConfigurationWith-Cfs-name2:
-#    Type: "AWS::CodeStarConnections::SyncConfiguration"
-#    Properties:
-#      RepositoryLinkId: !GetAtt ConnectionRepositoryLink.RepositoryLinkId
-#      RoleArn: !GetAtt CfsIamRoleGitSync.Arn
-#      Branch: !Ref BranchName
-#      ConfigFile: "infra/stack-definition-deployment-parameters.yaml"
-#      ResourceName: !Ref Cfs-stack-definition
-#      SyncType: "CFN_STACK_SYNC"
+  Cfs-vpc-definition:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Capabilities: "CAPABILITY_IAM"
+      StackName: "RootCNFRegister"
+      TemplateURL: "https://cf-templates-rpk1tnuk8wdm-ca-central-1.s3.ca-central-1.amazonaws.com/empty-template.yaml"
+
+  GitHubSyncConfigurationWith-Cfs-name2:
+    Type: "AWS::CodeStarConnections::SyncConfiguration"
+    Properties:
+      RepositoryLinkId: !GetAtt ConnectionRepositoryLink.RepositoryLinkId
+      RoleArn: !GetAtt CfsIamRoleGitSync.Arn
+      Branch: !Ref BranchName
+      ConfigFile: "aws-cfs/vpc-deployment-parameters.yaml"
+      ResourceName: !Ref Cfs-vpc-definition
+      SyncType: "CFN_STACK_SYNC"
 ########################################################################################################################
 ########### Cloud Formation Stack template - creating empty  Cfs-name2 template and sync it with Git file ##############
 #  Cfs-name3:

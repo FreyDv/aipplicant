@@ -1,0 +1,217 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Sample CloudFormation template to create a VPC, 2 public subnets, 2 private subnets,
+  route tables, an Internet Gateway, and a VPC Endpoint for S3.
+
+Parameters:
+  AllowedProviderCIDR :
+    Type : String
+    Default : "76.69.20.51/32"
+    Description : "CIDR block allowed for inbound traffic from the provider."
+  VpcCidr:
+    Type: String
+    Default: 10.0.0.0/22
+    Description: CIDR block for the VPC
+
+
+Resources:
+
+  VPC:
+    Type: AWS::EC2::VPC
+    DeletionPolicy: Delete
+    Properties:
+      CidrBlock: !Ref VpcCidr
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: !Sub "default-vpc-${AWS::Region}"
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    DeletionPolicy: Delete
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub "default-igw-${AWS::Region}"
+
+  MyInternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    DeletionPolicy: Delete
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  SubnetPublic1:
+    Type: AWS::EC2::Subnet
+    DeletionPolicy: Delete
+    Properties:
+      AvailabilityZone: !Select [ 0, !GetAZs { Ref : 'AWS::Region' } ]
+      CidrBlock: !Select [ 0, !Cidr [ !Ref VpcCidr, 4, 4 ] ]
+      VpcId: !Ref VPC
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - "default-subnet-public-${AZ}"
+            - { AZ: !Select [ 0, !GetAZs { Ref: 'AWS::Region' } ] }
+
+  SubnetPublic2:
+    Type: AWS::EC2::Subnet
+    DeletionPolicy: Delete
+    Properties:
+      AvailabilityZone: !Select [ 1, !GetAZs { Ref: 'AWS::Region' } ]
+      CidrBlock: !Select [ 1, !Cidr [ !Ref VpcCidr, 4, 4 ] ]
+      VpcId: !Ref VPC
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub
+          - "default-subnet-public-${AZ}"
+          - { AZ: !Select [ 1, !GetAZs { Ref: 'AWS::Region' } ] }
+
+  SubnetPrivate1:
+    Type: AWS::EC2::Subnet
+    DeletionPolicy: Delete
+    Properties:
+      AvailabilityZone: !Select [ 0, !GetAZs { Ref: 'AWS::Region' } ]
+      CidrBlock: !Select [ 2, !Cidr [ !Ref VpcCidr, 4, 4 ] ]
+      VpcId: !Ref VPC
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub
+          - "default-subnet-private-${AZ}"
+          - { AZ: !Select [ 0, !GetAZs { Ref: 'AWS::Region' } ] }
+
+  SubnetPrivate2:
+    Type: AWS::EC2::Subnet
+    DeletionPolicy: Delete
+    Properties:
+      AvailabilityZone: !Select [ 1, !GetAZs { Ref: 'AWS::Region' } ]
+      CidrBlock: !Select [ 3, !Cidr [ !Ref VpcCidr, 4, 4 ] ]
+      VpcId: !Ref VPC
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub
+          - "default-subnet-private-${AZ}"
+          - { AZ: !Select [ 1, !GetAZs { Ref: 'AWS::Region' } ] }
+
+  RouteTablePublic:
+    Type: AWS::EC2::RouteTable
+    DeletionPolicy: Delete
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: default-rtb-public
+
+  RouteTablePrivate1:
+    Type: AWS::EC2::RouteTable
+    DeletionPolicy: Delete
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub
+          - "default-rtb-private-${AZ}"
+          - { AZ : !Select [ 0, !GetAZs { Ref : 'AWS::Region' } ] }
+
+  RouteTablePrivate2:
+    Type: AWS::EC2::RouteTable
+    DeletionPolicy: Delete
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub
+            - "default-rtb-private-${AZ}"
+            - { AZ : !Select [ 1, !GetAZs { Ref : 'AWS::Region' } ] }
+
+  RouteToInternetPublic:
+    Type: AWS::EC2::Route
+    DeletionPolicy: Delete
+    DependsOn: MyInternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTablePublic
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  Subnet1RouteTableAssociationPublic:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DeletionPolicy: Delete
+    Properties:
+      RouteTableId: !Ref RouteTablePublic
+      SubnetId: !Ref SubnetPublic1
+
+  Subnet2RouteTableAssociationPublic:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DeletionPolicy: Delete
+    Properties:
+      RouteTableId: !Ref RouteTablePublic
+      SubnetId: !Ref SubnetPublic2
+
+  Subnet1RouteTableAssociationPrivate:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DeletionPolicy: Delete
+    Properties:
+      RouteTableId: !Ref RouteTablePrivate1
+      SubnetId: !Ref SubnetPrivate1
+
+  Subnet2RouteTableAssociationPrivate:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DeletionPolicy: Delete
+    Properties:
+      RouteTableId: !Ref RouteTablePrivate2
+      SubnetId: !Ref SubnetPrivate2
+
+  MyS3VPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    DeletionPolicy: Delete
+    Properties:
+      ServiceName: !Sub "com.amazonaws.${AWS::Region}.s3"
+      VpcId: !Ref VPC
+      RouteTableIds:
+        - !Ref RouteTablePrivate1
+        - !Ref RouteTablePrivate2
+      VpcEndpointType: Gateway
+      Tags:
+        - Key: Name
+          Value: default-vpce-s3
+
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription : "DB subnet group with private subnets"
+      SubnetIds:
+        - !Ref SubnetPrivate1
+        - !Ref SubnetPrivate2
+
+  DBAccessSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VPC
+      GroupDescription: "Allow access to RDS Aurora"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          CidrIp: !Ref AllowedProviderCIDR
+
+Outputs:
+  VpcId:
+    Description: VPC ID
+    Value: !Ref VPC
+  PublicSubnetIds:
+    Description: Public Subnets
+    Value: !Join [ ",", [ !Ref SubnetPublic1, !Ref SubnetPublic2 ] ]
+  PrivateSubnetIds:
+    Description: Private Subnets
+    Value: !Join [ ",", [ !Ref SubnetPrivate1, !Ref SubnetPrivate2 ] ]
+  DBSubnetGroupId:
+    Description: !Sub "Available private subnet in default-vpc-${AWS::Region} in 2 available zone fro DBSubnetGroup Id"
+    Value: !Ref DBSubnetGroup
+  DBAccessSecurityGroup:
+    Description:  "Allow access to RDS Aurora from my provider static ip"
+    Value: !Ref DBAccessSecurityGroup
