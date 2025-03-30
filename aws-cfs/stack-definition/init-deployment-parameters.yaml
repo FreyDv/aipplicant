@@ -1,0 +1,8 @@
+template-file-path: ./stack-definition.yaml
+
+parameters:
+  MandatoryStuckName: "cfsInit-aipplicant"
+  ProjectName: "aipplicant"
+  OwnerId: "FreyDv"
+  RepositoryName: "aipplicant"
+  BranchName: "main"
