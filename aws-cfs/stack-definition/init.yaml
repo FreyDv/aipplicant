@@ -98,7 +98,7 @@ Resources:
       RoleArn: !GetAtt CfsIamRoleGitSync.Arn
       Branch: !Ref BranchName
       ConfigFile: "aws-cfs/vpc-deployment-parameters.yaml"
-      ResourceName: !Ref Cfs-vpc-definition
+      ResourceName: !Ref CfsVpcDefinition
       SyncType: "CFN_STACK_SYNC"
 ########################################################################################################################
 ########### Cloud Formation Stack template - creating empty  Cfs-name2 template and sync it with Git file ##############
