@@ -65,7 +65,7 @@ Resources:
 
   ConnectionRepositoryLink:
     Type: AWS::CodeStarConnections::RepositoryLink
-    DeletionPolicy: Retain
+    DeletionPolicy: Delete
     Properties:
       ConnectionArn: !Ref ConnectionGitHub
       OwnerId: !Ref OwnerId
@@ -79,10 +79,10 @@ Resources:
       RepositoryLinkId: !GetAtt ConnectionRepositoryLink.RepositoryLinkId
       RoleArn: !GetAtt CfsIamRoleGitSync.Arn
       Branch: !Ref BranchName
-      ConfigFile: 'aws-cfs/stack-definition/init-deployment-parameters.yaml'
+      ConfigFile: "aws-cfs/stack-definition/init-deployment-parameters.yaml"
       ResourceName: !Ref MandatoryStuckName
       SyncType: "CFN_STACK_SYNC"
-      PullRequestComment: "ENABLED"
+      PullRequestComment: "DISABLED"
 ########################################################################################################################
 ########### Cloud Formation Stack template - creating empty  Cfs-name2 template and sync it with Git file ##############
 #  Cfs-name2:
