@@ -1,0 +1,121 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: "Init Project"
+
+Parameters:
+  MandatoryStuckName:
+    Type: "String"
+    Description: "Suggested stuck name"
+    Default: "cfsInit-aipplicant"
+  OwnerId:
+    Type: "String"
+    Description: "The GitHub Owner ID."
+    Default: "FreyDv"
+  RepositoryName:
+    Type: "String"
+    Description: "The name of the GitHub rep"
+    Default: "aipplicant"
+  BranchName:
+    Type: "String"
+    Description: "The name of the Git branch to use."
+    Default: "main"
+
+Resources:
+  CfsIamRoleGitSync:
+    Type: AWS::IAM::Role
+    DeletionPolicy: Delete
+    Properties:
+      Path: /
+      RoleName: "Cloud-Formation-IAM-role-Full-Access"
+      Description: "Allows CloudFormation to create and manage AWS stacks and resources on your behalf."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "cloudformation.amazonaws.com" #Need to determine if this is really required.
+                - "cloudformation.sync.codeconnections.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: "SetupServiceRole"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "events:*"
+                Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - "codestar-connections:*"
+                Resource: "*"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+        - "arn:aws:iam::aws:policy/AWSCloudFormationFullAccess"
+        - "arn:aws:iam::aws:policy/AWSCodePipeline_FullAccess"
+        - "arn:aws:iam::aws:policy/IAMFullAccess"
+
+  ConnectionGitHub:
+    Type: AWS::CodeStarConnections::Connection
+    DeletionPolicy: Delete
+    Properties:
+      ConnectionName: !Sub "cfn-git-sync-${RepositoryName}"
+      ProviderType: "GitHub"
+
+  ConnectionRepositoryLink:
+    Type: AWS::CodeStarConnections::RepositoryLink
+    DeletionPolicy: Delete
+    Properties:
+      ConnectionArn: !Ref ConnectionGitHub
+      OwnerId: !Ref OwnerId
+      RepositoryName: !Ref RepositoryName
+
+  ######################################  List of Synced Cloud Formation Stacks ##########################################
+  ########### Cloud Formation Stack template - creating empty  Cfs-stack-definition template and sync it with Git file ###############
+  GitHubSyncConfigurationInit:
+    Type: "AWS::CodeStarConnections::SyncConfiguration"
+    Properties:
+      RepositoryLinkId: !GetAtt ConnectionRepositoryLink.RepositoryLinkId
+      RoleArn: !GetAtt CfsIamRoleGitSync.Arn
+      Branch: !Ref BranchName
+      ConfigFile: "aws-cfs/stack-definition/init-deployment-parameters.yaml"
+      ResourceName: !Ref MandatoryStuckName
+      SyncType: "CFN_STACK_SYNC"
+########################################################################################################################
+########### Cloud Formation Stack template - creating empty  Cfs-name2 template and sync it with Git file ##############
+#  Cfs-name2:
+#    Type: AWS::CloudFormation::Stack
+#    Properties:
+#      Capabilities: "CAPABILITY_IAM"
+#      StackName: "RootCNFRegister"
+#      TemplateURL: "https://cf-templates-rpk1tnuk8wdm-ca-central-1.s3.ca-central-1.amazonaws.com/empty-template.yaml"
+#
+#  GitHubSyncConfigurationWith-Cfs-name2:
+#    Type: "AWS::CodeStarConnections::SyncConfiguration"
+#    Properties:
+#      RepositoryLinkId: !GetAtt ConnectionRepositoryLink.RepositoryLinkId
+#      RoleArn: !GetAtt CfsIamRoleGitSync.Arn
+#      Branch: !Ref BranchName
+#      ConfigFile: "infra/stack-definition-deployment-parameters.yaml"
+#      ResourceName: !Ref Cfs-stack-definition
+#      SyncType: "CFN_STACK_SYNC"
+########################################################################################################################
+########### Cloud Formation Stack template - creating empty  Cfs-name2 template and sync it with Git file ##############
+#  Cfs-name3:
+#    Type: AWS::CloudFormation::Stack
+#    Properties:
+#      Capabilities: "CAPABILITY_IAM"
+#      StackName: "RootCNFRegister"
+#      TemplateURL: "https://cf-templates-rpk1tnuk8wdm-ca-central-1.s3.ca-central-1.amazonaws.com/empty-template.yaml"
+#
+#  GitHubSyncConfigurationWith-Cfs-name3:
+#    Type: "AWS::CodeStarConnections::SyncConfiguration"
+#    Properties:
+#      RepositoryLinkId: !GetAtt ConnectionRepositoryLink.RepositoryLinkId
+#      RoleArn: !GetAtt CfsIamRoleGitSync.Arn
+#      Branch: !Ref BranchName
+#      ConfigFile: "infra/stack-definition-deployment-parameters.yaml"
+#      ResourceName: !Ref Cfs-stack-definition
+#      SyncType: "CFN_STACK_SYNC"
+########################################################################################################################

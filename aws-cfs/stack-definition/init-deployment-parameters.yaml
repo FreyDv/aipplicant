@@ -1,0 +1,7 @@
+template-file-path: "aws-cfs/stack-definition/init.yaml"
+
+parameters:
+  MandatoryStuckName: "cfsInit-aipplicant"
+  OwnerId: "FreyDv"
+  RepositoryName: "aipplicant"
+  BranchName: "main"
