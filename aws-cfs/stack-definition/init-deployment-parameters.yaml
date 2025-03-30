@@ -2,7 +2,6 @@ template-file-path: "aws-cfs/stack-definition/init.yaml"
 
 parameters:
   MandatoryStuckName: "cfsInit-aipplicant"
-  ProjectName: "aipplicant"
   OwnerId: "FreyDv"
   RepositoryName: "aipplicant"
   BranchName: "main"
