@@ -1,4 +1,4 @@
-template-file-path: ./init.yaml
+template-file-path: aws-cfs/stack-definition/init.yaml
 
 parameters:
   MandatoryStuckName: "cfsInit-aipplicant"
