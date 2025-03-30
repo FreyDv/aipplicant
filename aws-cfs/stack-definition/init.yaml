@@ -82,6 +82,7 @@ Resources:
       ConfigFile: 'aws-cfs/stack-definition/init-deployment-parameters.yaml'
       ResourceName: !Ref MandatoryStuckName
       SyncType: "CFN_STACK_SYNC"
+      PullRequestComment: "ENABLED"
 ########################################################################################################################
 ########### Cloud Formation Stack template - creating empty  Cfs-name2 template and sync it with Git file ##############
 #  Cfs-name2:
