@@ -65,7 +65,7 @@ Resources:
 
   ConnectionRepositoryLink:
     Type: AWS::CodeStarConnections::RepositoryLink
-    DeletionPolicy: Delete
+    DeletionPolicy: Retain
     Properties:
       ConnectionArn: !Ref ConnectionGitHub
       OwnerId: !Ref OwnerId
