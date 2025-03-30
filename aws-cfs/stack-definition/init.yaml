@@ -79,7 +79,7 @@ Resources:
       RepositoryLinkId: !GetAtt ConnectionRepositoryLink.RepositoryLinkId
       RoleArn: !GetAtt CfsIamRoleGitSync.Arn
       Branch: !Ref BranchName
-      ConfigFile: "aws-cfs/stack-definition/init-deployment-parameters.yaml"
+      ConfigFile: 'aws-cfs/stack-definition/init-deployment-parameters.yaml'
       ResourceName: !Ref MandatoryStuckName
       SyncType: "CFN_STACK_SYNC"
 ########################################################################################################################
