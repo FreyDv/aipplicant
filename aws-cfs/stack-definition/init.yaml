@@ -60,11 +60,16 @@ Resources:
   ConnectionGitHub:
     Type: AWS::CodeStarConnections::Connection
     DeletionPolicy: Delete
+    DependsOn:
+      - CfsIamRoleGitSync
     Properties:
       ConnectionName: !Sub "cfn-git-sync-${RepositoryName}"
       ProviderType: "GitHub"
 
   ConnectionRepositoryLink:
+    DependsOn:
+      - CfsIamRoleGitSync
+      - ConnectionGitHub
     Type: AWS::CodeStarConnections::RepositoryLink
     DeletionPolicy: Delete
     Properties:
@@ -77,6 +82,10 @@ Resources:
   GitHubSyncConfigurationInit:
     Type: "AWS::CodeStarConnections::SyncConfiguration"
     DeletionPolicy: Delete
+    DependsOn:
+      - CfsIamRoleGitSync
+      - ConnectionGitHub
+      - ConnectionRepositoryLink
     Properties:
       RepositoryLinkId: !GetAtt ConnectionRepositoryLink.RepositoryLinkId
       RoleArn: !GetAtt CfsIamRoleGitSync.Arn
@@ -89,12 +98,21 @@ Resources:
   CfsVpcDefinition:
     Type: AWS::CloudFormation::Stack
     DeletionPolicy: Delete
+    DependsOn:
+      - CfsIamRoleGitSync
+      - ConnectionGitHub
+      - ConnectionRepositoryLink
     Properties:
       TemplateURL: "https://cf-templates-rpk1tnuk8wdm-ca-central-1.s3.ca-central-1.amazonaws.com/empty-template.yaml"
 
   GitHubSyncConfigurationWithCfsVpcDefinition:
     Type: "AWS::CodeStarConnections::SyncConfiguration"
     DeletionPolicy: Delete
+    DependsOn:
+      - CfsIamRoleGitSync
+      - ConnectionGitHub
+      - ConnectionRepositoryLink
+      - CfsVpcDefinition
     Properties:
       RepositoryLinkId: !GetAtt ConnectionRepositoryLink.RepositoryLinkId
       RoleArn: !GetAtt CfsIamRoleGitSync.Arn
