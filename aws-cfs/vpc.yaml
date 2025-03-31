@@ -5,9 +5,9 @@ Description: >
 
 Parameters:
   AllowedProviderCIDR :
-    Type : String
-    Default : "76.69.20.51/32"
-    Description : "CIDR block allowed for inbound traffic from the provider."
+    Type: String
+    Default: "76.69.20.51/32"
+    Description: "CIDR block allowed for inbound traffic from the provider."
   VpcCidr:
     Type: String
     Default: 10.0.0.0/22
@@ -15,7 +15,6 @@ Parameters:
 
 
 Resources:
-
   VPC:
     Type: AWS::EC2::VPC
     DeletionPolicy: Delete
@@ -176,9 +175,6 @@ Resources:
         - !Ref RouteTablePrivate1
         - !Ref RouteTablePrivate2
       VpcEndpointType: Gateway
-    Tags:
-      - Key: Name
-        Value: default-vpce-s3
 
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
@@ -210,7 +206,7 @@ Outputs:
     Description: Private Subnets
     Value: !Join [ ",", [ !Ref SubnetPrivate1, !Ref SubnetPrivate2 ] ]
   DBSubnetGroupId:
-    Description: !Sub "Available private subnet in default-vpc-${AWS::Region} in 2 available zone fro DBSubnetGroup Id"
+    Description: "Available private subnet in default-vpc in 2 availability zones for DBSubnetGroup Id"
     Value: !Ref DBSubnetGroup
   DBAccessSecurityGroup:
     Description:  "Allow access to RDS Aurora from my provider static ip"
