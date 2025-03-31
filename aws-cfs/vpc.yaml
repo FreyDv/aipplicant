@@ -178,6 +178,7 @@ Resources:
 
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
+    DeletionPolicy: Delete
     Properties:
       DBSubnetGroupDescription : "DB subnet group with private subnets"
       SubnetIds:
@@ -186,6 +187,7 @@ Resources:
 
   DBAccessSecurityGroup:
     Type: AWS::EC2::SecurityGroup
+    DeletionPolicy: Delete
     Properties:
       VpcId: !Ref VPC
       GroupDescription: "Allow access to RDS Aurora"
