@@ -75,6 +75,7 @@ Resources:
   ########### Cloud Formation Stack template - creating empty  Cfs-stack-definition template and sync it with Git file ###############
   GitHubSyncConfigurationInit:
     Type: "AWS::CodeStarConnections::SyncConfiguration"
+    DeletionPolicy: Delete
     Properties:
       RepositoryLinkId: !GetAtt ConnectionRepositoryLink.RepositoryLinkId
       RoleArn: !GetAtt CfsIamRoleGitSync.Arn
@@ -91,7 +92,7 @@ Resources:
       StackName: "RootCNFRegister"
       TemplateURL: "https://cf-templates-rpk1tnuk8wdm-ca-central-1.s3.ca-central-1.amazonaws.com/empty-template.yaml"
 
-  GitHubSyncConfigurationWith-Cfs-name2:
+  GitHubSyncConfigurationWithCfsVpcDefinition:
     Type: "AWS::CodeStarConnections::SyncConfiguration"
     Properties:
       RepositoryLinkId: !GetAtt ConnectionRepositoryLink.RepositoryLinkId
