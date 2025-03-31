@@ -176,9 +176,9 @@ Resources:
         - !Ref RouteTablePrivate1
         - !Ref RouteTablePrivate2
       VpcEndpointType: Gateway
-      Tags:
-        - Key: Name
-          Value: default-vpce-s3
+    Tags:
+      - Key: Name
+        Value: default-vpce-s3
 
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
