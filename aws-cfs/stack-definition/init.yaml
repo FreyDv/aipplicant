@@ -96,31 +96,31 @@ Resources:
 
 ########################################################################################################################
 ########### Cloud Formation Stack template - creating empty  Cfs-name2 template and sync it with Git file ##############
-#  CfsVpcDefinition:
-#    Type: AWS::CloudFormation::Stack
-#    DeletionPolicy: Delete
-#    DependsOn:
-#      - CfsIamRoleGitSync
-#      - ConnectionGitHub
-#      - ConnectionRepositoryLink
-#    Properties:
-#      TemplateURL: "https://cf-templates-rpk1tnuk8wdm-ca-central-1.s3.ca-central-1.amazonaws.com/empty-template.yaml"
-#
-#  GitHubSyncConfigurationWithCfsVpcDefinition:
-#    Type: "AWS::CodeStarConnections::SyncConfiguration"
-#    DeletionPolicy: Delete
-#    DependsOn:
-#      - CfsIamRoleGitSync
-#      - ConnectionGitHub
-#      - ConnectionRepositoryLink
-#      - CfsVpcDefinition
-#    Properties:
-#      RepositoryLinkId: !GetAtt ConnectionRepositoryLink.RepositoryLinkId
-#      RoleArn: !GetAtt CfsIamRoleGitSync.Arn
-#      Branch: !Ref BranchName
-#      ConfigFile: "aws-cfs/vpc-deployment-parameters.yaml"
-#      ResourceName: !GetAtt CfsVpcDefinition.Outputs.StackName
-#      SyncType: "CFN_STACK_SYNC"
+  CfsVpcDefinition:
+    Type: AWS::CloudFormation::Stack
+    DeletionPolicy: Delete
+    DependsOn:
+      - CfsIamRoleGitSync
+      - ConnectionGitHub
+      - ConnectionRepositoryLink
+    Properties:
+      TemplateURL: "https://cf-templates-rpk1tnuk8wdm-ca-central-1.s3.ca-central-1.amazonaws.com/empty-template.yaml"
+
+  GitHubSyncConfigurationWithCfsVpcDefinition:
+    Type: "AWS::CodeStarConnections::SyncConfiguration"
+    DeletionPolicy: Delete
+    DependsOn:
+      - CfsIamRoleGitSync
+      - ConnectionGitHub
+      - ConnectionRepositoryLink
+      - CfsVpcDefinition
+    Properties:
+      RepositoryLinkId: !GetAtt ConnectionRepositoryLink.RepositoryLinkId
+      RoleArn: !GetAtt CfsIamRoleGitSync.Arn
+      Branch: !Ref BranchName
+      ConfigFile: "aws-cfs/vpc-deployment-parameters.yaml"
+      ResourceName: !GetAtt CfsVpcDefinition.Outputs.StackName
+      SyncType: "CFN_STACK_SYNC"
 ########################################################################################################################
 ########### Cloud Formation Stack template - creating empty  Cfs-name2 template and sync it with Git file ##############
 #  Cfs-name3:
