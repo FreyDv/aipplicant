@@ -88,7 +88,8 @@ Resources:
   CfsVpcDefinition:
     Type: AWS::CloudFormation::Stack
     Properties:
-      Capabilities: "CAPABILITY_IAM"
+      Capabilities:
+        - "CAPABILITY_IAM"
       StackName: "RootCNFRegister"
       TemplateURL: "https://cf-templates-rpk1tnuk8wdm-ca-central-1.s3.ca-central-1.amazonaws.com/empty-template.yaml"
 
